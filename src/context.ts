@@ -49,13 +49,18 @@ const context = (locals: any, config: RunnerConfig = {}) => {
         ? config.helpers(locals, config)
         : config.helpers)) ||
     {}
-  return Object.assign(
-    localsWithDefaults,
-    capitalizedLocals(localsWithDefaults),
-    {
-      h: { ...helpers, ...configHelpers },
-    },
-  )
+  const tplContext = {
+    ...localsWithDefaults,
+    ...capitalizedLocals(localsWithDefaults),
+
+    h: { ...helpers, ...configHelpers },
+  }
+
+  if (!tplContext.filename) {
+    tplContext.filename = 'unknown'
+  }
+
+  return tplContext
 }
 
 export default context

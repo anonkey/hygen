@@ -17,6 +17,8 @@ export interface Attribute {
   sh?: string
 }
 
+export type ExtendedAttributes = Attribute & Record<string, any>
+
 export interface Prompter<Q, T> {
   prompt: (arg0: Q) => Promise<T>
 }
@@ -62,4 +64,5 @@ export type ParamsResult = {
   actionfolder?: string
   name?: string
   dry?: boolean
+  children?: string
 } & object

@@ -1,6 +1,6 @@
 import path from 'path'
 import walk from 'ignore-walk'
-import { RunnerConfig } from '../types'
+import { RunnerConfig, RenderedAction } from '../types'
 import renderFiles from './renderFiles'
 
 const ignores = [
@@ -21,10 +21,13 @@ async function getFiles(dir) {
   return files
 }
 
-const filterFiles = (files: string[], args) => {
+const filterFiles = (files: string[], args, config) => {
   const filteredFiles = files
     .sort((a, b) => a.localeCompare(b)) // TODO: add a test to verify this sort
-    .filter((f) => !ignores.find((ig) => f.endsWith(ig))) // TODO: add a
+    .filter(
+      (f) =>
+        ![...ignores, ...(config.ignores || [])].find((ig) => f.endsWith(ig)),
+    ) // TODO: add a
   // test for ignoring prompt.js and index.js
 
   return args.subaction
@@ -34,9 +37,12 @@ const filterFiles = (files: string[], args) => {
     : filteredFiles
 }
 
-const render = async (args: any, config: RunnerConfig) => {
+const render = async (
+  args: any,
+  config: RunnerConfig,
+): Promise<RenderedAction[]> => {
   const files = await getFiles(args.actionfolder)
-  const filteredFiles = filterFiles(files, args)
+  const filteredFiles = filterFiles(files, args, config)
 
   return renderFiles(filteredFiles, args, config)
 }
